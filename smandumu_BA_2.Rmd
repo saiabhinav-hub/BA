@@ -1,0 +1,105 @@
+---
+title: "smandumu_BA_2"
+author: "smandumu"
+date: "11/11/2019"
+output: html_document
+---
+```{r}
+set.seed(2017)
+X=runif(100)*10
+Y=X*4+3.45
+Y=rnorm(100)*0.29*Y+Y
+#******Question 1********#
+# a 
+plot(X,Y)
+
+abline(lsfit(X,Y))
+cor(X,Y)
+# Yes we can fit a linear model as it’s a stronger correlation.
+# b
+lm = lm(Y~X)
+lm$coefficients
+summary(lm)
+# Equation Y based on X
+#   Y = 4.4655 + 3.6108(X)
+summary(lm)$r.squared
+# Linear Model has a accuracy of 65.17187%
+# c
+cor(X, Y, method = c("pearson"))^2
+# R^2 = r^2
+# Coefficient of determination equals to coefficient of corelation square.
+#d
+hist(lm$residuals,freq = FALSE,ylim = c(0,0.05))
+curve(dnorm(x,mean(lm$residuals),sd(lm$residuals)),add = TRUE)
+
+qqnorm(lm$residuals)
+qqline(lm$residuals)
+# Linear Regession is appropriate since residuals are normally distributed.
+
+#**** END- Question 1*****#
+
+# Question 2 
+data("mtcars")
+head(mtcars)
+summary(mtcars)
+#a
+str(mtcars)
+library(ggplot2)
+ggplot(mtcars, aes(hp, mpg)) + geom_point() +  geom_smooth(method = "lm", se = FALSE)
+cor(mtcars$mpg,mtcars$hp)
+# Neagative Correlation hp increase and mpg decrease
+ggplot(mtcars, aes(hp, wt)) + geom_point() +  geom_smooth(method = "lm", se = FALSE)
+cor(mtcars$wt,mtcars$hp)
+# Positive Correlation hp increase and Wt Increases
+lmpg <- lm(mtcars$hp~mtcars$mpg)
+lwt <- lm(mtcars$hp~mtcars$wt)
+summary(lmpg)
+# Accuracy secrued 60.24
+summary(lwt)
+# Accuracy secrued 43.39
+# Therefore Chris thinking is correct.
+# b - I
+lmb <- lm(hp ~ cyl + mpg, data=mtcars)
+predict(lmb,data.frame(cyl=4,mpg=22))
+# Estimated horse power of car with the above is 88.93618
+# b - II
+predict(lmb,data.frame(cyl=4,mpg=22),interval = "prediction",level = 0.85)
+# 85% confidence interval 
+
+#**** END- Question 2*****#
+
+# Question 3
+#install.packages('mlbench')
+library(mlbench)
+data(BostonHousing)
+summary(BostonHousing)
+#3 a
+lmbos <- lm(medv~crim+zn+ptratio+chas,data= BostonHousing)
+summary(lmbos)
+# Accuarcy of 35.99 not an noted accurate model.
+# 3 b-I
+lmbos$coefficients
+#The approximate chas parameter coefficients were positively correlated with medv from the above model. Therefore, house borders were 4.59 times costly
+# b b - II
+bII<-lm(medv~ptratio, data=BostonHousing)
+predict(bII,newdata = data.frame(ptratio=15))
+
+predict(bII,newdata = data.frame(ptratio=18))
+
+# Difference is 6.4715 which says 15 is expesive
+
+# c
+summary(lmbos)
+# A weak p value under 0.05 indicates dismissal of null hypothesis. Therefore, both variables are statistically significant from the regression model
+
+#d 
+d3 <-anova(lmbos)
+d3$im_per<- d3[,2]/sum(d3[,2])
+d3
+# the order of variables are crim > ptratio > ZN > chas
+
+
+
+
+```
+
